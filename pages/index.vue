@@ -6,20 +6,33 @@
       </md-button>
       <nuxt-link class="md-primary md-title" to="/login"> login </nuxt-link>
       <nuxt-link class="md-primary md-title" to="/"> News </nuxt-link>
-      <nuxt-link class="md-primary md-title" to="/registartion">
+      <!-- <nuxt-link  class="md-primary md-title" to="/registartion">
         register
-      </nuxt-link>
+      </nuxt-link> -->
 
       <md-button class="md-accent" @click="showSidePanel = true">
         Categories
       </md-button>
 
       <div class="md-toolbar-section-end">
-        <md-button to="/login">Login</md-button>
-        <md-button to="/register">Register</md-button>
+              <template v-if="isAuthenticated">
+                      <md-button>
+                              <md-avatar>
+                                      <img :src="user.avatar" :alt="user.email">
+                                      {{user.email}}
+                              </md-avatar>
+                      </md-button>
+                      <md-button>
+                              logout
+                      </md-button>
+              </template>
+              <template v-else>
+                        <md-button v-if="!isAuthenticated" to="/login">Login</md-button>
+                        <md-button v-if="!isAuthenticated" to="/register">Register</md-button>
+              </template>
       </div>
     </md-toolbar>
-    \
+    
     <md-drawer md-fixed :md-active.sync="showleftSideBar">
       <md-toolbar md-elevation="1">
         <span class="md-title">Personal Feed</span>
@@ -60,7 +73,7 @@
       </md-list>
     </md-drawer>
     <!-- <md-button class="md-accent">click me</md-button> -->
-    <md-layout class="md-layout md-alignment-center">
+    
       <div class="md-layout-item md-size-95">
         <md-content class="md-layout md-gutter card-inner">
           <ul
@@ -107,7 +120,7 @@
           </ul>
         </md-content>
       </div>
-    </md-layout>
+    
   </div>
 </template>
 
@@ -193,9 +206,16 @@ export default {
     loading() {
       return this.$store.getters.loadingState;
     },
+    isAuthenticated(){
+            return this.$store.getters.isAuthenticated
+    },
     country() {
       return this.$store.getters.country;
     },
+    user() {
+      return this.$store.getters.user;
+    },
+
   },
   methods: {
     async loadCategory(category) {
