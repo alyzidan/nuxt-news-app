@@ -75,7 +75,7 @@ export default {
                         return this.$store.getters.loadingState
                         },
                 isAuthenticated() {
-                        return this.$store.getters.isAuthenticated
+                        return !!this.$store.getters.isAuthenticated
                         },
                 isValidForm(){
                         return this.$v.$invalid
@@ -83,7 +83,7 @@ export default {
         },
         watch:{
                 isAuthenticated(value){
-                        if(value) setTimeout(() => this.$router.push('/'),3000)
+                        if(value) setTimeout(() => this.$router.push('/'),2000)
                 }
         },
         methods:{
@@ -95,17 +95,16 @@ export default {
                 },
                async registerUser(){
                        const {email,password} = {...this.form}
+                       const action = 'register';
                        const returnSecureToken = true
-                       await this.$store.dispatch('AuthenticateUser', {email,password,returnSecureToken})
+                       await this.$store.dispatch('AuthenticateUser', {action,email,password,returnSecureToken})
                },
                getValidationClass(fieldName){
                        const field = this.$v.form[fieldName];
                        const result =  {'md-invalid':field.$invalid }
-                       console.log(result)
                        if (field) {
                                return result
                                }
-
                }
         }
 }

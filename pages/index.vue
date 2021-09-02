@@ -18,11 +18,12 @@
               <template v-if="isAuthenticated">
                       <md-button>
                               <md-avatar>
-                                      <img :src="user.avatar" :alt="user.email">
-                                      {{user.email}}
+                                      <img :src='userAvatar' >
+                                      
                               </md-avatar>
+                                      {{user.user}}
                       </md-button>
-                      <md-button>
+                      <md-button @click="logoutUser">
                               logout
                       </md-button>
               </template>
@@ -109,14 +110,11 @@
                 {{ headline.description }}
               </md-card-content>
               <md-card-actions>
-                <md-button class="md-icon-button">
+                <md-button @click="bookmarkAtricle(headline)" class="md-icon-button">
                   <md-icon> bookmark </md-icon>
                 </md-button>
               </md-card-actions>
             </md-card>
-            <!-- <li>
-              {{ headline }}
-            </li> -->
           </ul>
         </md-content>
       </div>
@@ -188,14 +186,6 @@ export default {
       `/api/top-headlines/sources?country=${store.state.country}&category=${store.state.category}`
     );
   },
-  // watch: {
-  //   async country() {
-  //     await this.$store.dispatch(
-  //       "loadHeadlines",
-  //       `/api/top-headlines/sources?country=${store.state.country}&category=${store.state.category}`
-  //     );
-  //   },
-  // },
   computed: {
     headlines() {
       return this.$store.getters.headlines;
@@ -204,10 +194,10 @@ export default {
       return this.$store.getters.category;
     },
     loading() {
-      return this.$store.getters.loadingState;
+        return this.$store.getters.loadingState;
     },
     isAuthenticated(){
-            return this.$store.getters.isAuthenticated
+        return this.$store.getters.isAuthenticated
     },
     country() {
       return this.$store.getters.country;
@@ -215,8 +205,15 @@ export default {
     user() {
       return this.$store.getters.user;
     },
-
+    userAvatar(){
+            return this.$store.getters.user?.avatar?.toString() || null;
+    },
   },
+  watch:{
+                isAuthenticated(value){
+                        if(value) setTimeout(() => this.$router.push('/login'),2000)
+                }
+        },
   methods: {
     async loadCategory(category) {
       this.$store.commit(`SET_CATEGORY`, category);
@@ -225,10 +222,18 @@ export default {
         `/api/top-headlines/sources?country=${this.$store.state.country}&category=${this.$store.state.category}`
       );
     },
+    async bookmarkAtricle(headline){
+            if(this.user) {
+                    await this.$store.dispatch('bookmarkAtricle',headline)
+            }
+    },
     changeCountry(country) {
       console.log(country);
       this.$store.commit("SET_COUNTRY", country);
     },
+    logoutUser(){
+        this.$store.dispatch('setLogoutTimer',1000)
+    }
   },
 };
 </script>

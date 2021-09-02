@@ -1,8 +1,11 @@
 const pkg = require('./package')
+import middleware from './.nuxt/middleware';
 
 module.exports = {
   mode: 'universal',
-
+  router: {
+        middleware:'check-auth'
+  },
   /*
   ** Headers of the page
   */
@@ -66,13 +69,17 @@ module.exports = {
   },
   proxy: {
     "/api/": {
-      target: 'https://newsapi.org/v2/',
+                  target: 'https://newsapi.org/v2/',
                   pathRewrite: { "^/api/": "" }
           },
           "/register/": {
                   target: 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA9YZEMdoiV8_ay87ordsQo0jy1A0Vy2bw',
                   pathRewrite: { '^/register/':''}
-          }
+          },
+          "/login/": {
+                  target: 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA9YZEMdoiV8_ay87ordsQo0jy1A0Vy2bw',
+                  pathRewrite: { '^/login/':''}
+          },
   },
   env: {
     NEWS_API_KEY: 'c5b2d4aec91f484b9e985ae218c1eb84',
